@@ -1,0 +1,201 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------ *
+ * Design tokens
+ *
+ * Every colour is declared once as a role. Dark mode is a selected set
+ * of steps against the dark surface, not an automatic inversion, and is
+ * declared under both the OS media query and the explicit theme stamp
+ * so the in-app toggle wins either way.
+ * ------------------------------------------------------------------ */
+
+:root {
+  color-scheme: light;
+
+  --page: #f9f9f7;
+  --surface: #fcfcfb;
+  --surface-2: #f2f2ee;
+  --border: rgb(11 11 11 / 0.1);
+  --border-strong: #e1e0d9;
+
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #898781;
+
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+
+  /* Categorical slots */
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+
+  /* Ordinal blue ramp for pipeline stages, validated light-end >= 2:1 */
+  --stage-1: #86b6ef;
+  --stage-2: #5598e7;
+  --stage-3: #2a78d6;
+  --stage-4: #1c5cab;
+  --stage-5: #0d366b;
+
+  /* Status - fixed, never themed */
+  --good: #0ca30c;
+  --warning: #fab219;
+  --serious: #ec835a;
+  --critical: #d03b3b;
+  --good-text: #006300;
+
+  --accent: #2a78d6;
+  --accent-contrast: #ffffff;
+
+  --shadow-sm: 0 1px 2px rgb(11 11 11 / 0.06);
+  --shadow-md: 0 4px 14px rgb(11 11 11 / 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --surface-2: #232321;
+    --border: rgb(255 255 255 / 0.1);
+    --border-strong: #2c2c2a;
+
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #898781;
+
+    --grid: #2c2c2a;
+    --axis: #383835;
+
+    --series-1: #3987e5;
+    --series-2: #d95926;
+
+    --stage-1: #cde2fb;
+    --stage-2: #9ec5f4;
+    --stage-3: #6da7ec;
+    --stage-4: #3987e5;
+    --stage-5: #184f95;
+
+    --good-text: #0ca30c;
+
+    --accent: #3987e5;
+    --accent-contrast: #0b0b0b;
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-md: 0 4px 14px rgb(0 0 0 / 0.5);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --page: #0d0d0d;
+  --surface: #1a1a19;
+  --surface-2: #232321;
+  --border: rgb(255 255 255 / 0.1);
+  --border-strong: #2c2c2a;
+
+  --text-primary: #ffffff;
+  --text-secondary: #c3c2b7;
+  --text-muted: #898781;
+
+  --grid: #2c2c2a;
+  --axis: #383835;
+
+  --series-1: #3987e5;
+  --series-2: #d95926;
+
+  --stage-1: #cde2fb;
+  --stage-2: #9ec5f4;
+  --stage-3: #6da7ec;
+  --stage-4: #3987e5;
+  --stage-5: #184f95;
+
+  --good-text: #0ca30c;
+
+  --accent: #3987e5;
+  --accent-contrast: #0b0b0b;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 14px rgb(0 0 0 / 0.5);
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-ink: var(--text-primary);
+  --color-ink-2: var(--text-secondary);
+  --color-ink-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-good: var(--good);
+  --color-warning: var(--warning);
+  --color-serious: var(--serious);
+  --color-critical: var(--critical);
+  --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+* {
+  border-color: var(--border);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Focus ring that is visible on both surfaces */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Axis ticks and table columns need aligned figures; standalone numbers do not */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Drag affordances */
+.drag-over {
+  background: color-mix(in oklab, var(--accent) 8%, transparent);
+  outline: 2px dashed var(--accent);
+  outline-offset: -2px;
+}
+
+.dragging {
+  opacity: 0.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Thin, unobtrusive scrollbars on the board columns */
+.thin-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: var(--axis);
+  border-radius: 999px;
+}
+.thin-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
