@@ -76,7 +76,12 @@ export function useStore(): Store {
     } else {
       const rows = (data ?? []) as Job[]
       setJobs(sortJobs(rows))
-      writeLocal(rows) // offline mirror
+      // Mirror for offline use — but never let an empty cloud table clobber a
+      // populated local cache. That happens the first time you point an app
+      // full of localStorage data at a fresh database, and it silently eats
+      // everything. The cloud is still the source of truth for what renders;
+      // this only keeps the fallback copy from being destroyed.
+      if (rows.length > 0 || readLocal().length === 0) writeLocal(rows)
     }
     setLoading(false)
   }, [])
