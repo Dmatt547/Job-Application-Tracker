@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Auth } from '../lib/auth'
 import { Button, Field, fieldClass } from './ui'
+import { GoogleButton } from './GoogleButton'
 
 export function SignIn({ auth }: { auth: Auth }) {
   const [email, setEmail] = useState('')
@@ -87,29 +88,12 @@ export function SignIn({ auth }: { auth: Auth }) {
           </div>
         ) : (
           <>
-            <Button
-              variant="outline"
-              className="mt-6 w-full"
-              onClick={() => void google()}
-              disabled={status === 'redirecting'}
-            >
-              {/* Google's official mark, served from public/google.svg. Their
-                  branding guidelines require the supplied asset rather than a
-                  redrawn copy, so if the file is missing we drop the image and
-                  keep a text-only button instead of showing a broken icon. */}
-              <img
-                src="/google.svg"
-                alt=""
-                aria-hidden="true"
-                width={18}
-                height={18}
-                className="shrink-0"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none'
-                }}
+            <div className="mt-6">
+              <GoogleButton
+                onClick={() => void google()}
+                disabled={status === 'redirecting'}
               />
-              {status === 'redirecting' ? 'Redirecting…' : 'Continue with Google'}
-            </Button>
+            </div>
 
             <div className="my-4 flex items-center gap-3" aria-hidden="true">
               <span className="h-px flex-1 bg-[var(--border-strong)]" />
