@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import type { Job, JobDraft } from '../src/types'
+import type { Job, JobDraft } from './types'
 import { useStore } from './lib/store'
 import { useAuth } from './lib/auth'
 import { buildActionQueue } from './lib/derive'

@@ -22,14 +22,7 @@ export const OPEN_STATUSES: Status[] = [
 ]
 
 /** Columns shown on the board, in pipeline order. */
-export const BOARD_COLUMNS: Status[] = [
-  'Not applied',
-  'Applied',
-  'Pending',
-  'Heard back',
-  'Interview',
-  'Offer',
-]
+export const BOARD_COLUMNS = OPEN_STATUSES
 
 export const SOURCES = [
   'Seek',

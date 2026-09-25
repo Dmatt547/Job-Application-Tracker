@@ -9,15 +9,15 @@ import type { Status, Priority } from '../types'
  * glyph as well as colour, so state never rests on hue alone.
  * ------------------------------------------------------------------ */
 
-export const STATUS_STYLE: Record<Status, { color: string; glyph: string; onDark: boolean }> = {
-  'Not applied': { color: 'var(--text-muted)', glyph: '○', onDark: true },
-  Applied: { color: 'var(--stage-2)', glyph: '◔', onDark: false },
-  Pending: { color: 'var(--stage-3)', glyph: '◑', onDark: true },
-  'Heard back': { color: 'var(--stage-4)', glyph: '◕', onDark: true },
-  Interview: { color: 'var(--stage-5)', glyph: '★', onDark: true },
-  Offer: { color: 'var(--good)', glyph: '✓', onDark: true },
-  Rejected: { color: 'var(--critical)', glyph: '✕', onDark: true },
-  Withdrawn: { color: 'var(--text-muted)', glyph: '—', onDark: true },
+export const STATUS_STYLE: Record<Status, { color: string; glyph: string }> = {
+  'Not applied': { color: 'var(--text-muted)', glyph: '○' },
+  Applied: { color: 'var(--stage-2)', glyph: '◔' },
+  Pending: { color: 'var(--stage-3)', glyph: '◑' },
+  'Heard back': { color: 'var(--stage-4)', glyph: '◕' },
+  Interview: { color: 'var(--stage-5)', glyph: '★' },
+  Offer: { color: 'var(--good)', glyph: '✓' },
+  Rejected: { color: 'var(--critical)', glyph: '✕' },
+  Withdrawn: { color: 'var(--text-muted)', glyph: '—' },
 }
 
 export function StatusBadge({ status, size = 'sm' }: { status: Status; size?: 'sm' | 'xs' }) {
@@ -108,7 +108,7 @@ export function StatTile({
   label: string
   value: string | number
   sub?: string
-  tone?: 'good' | 'critical' | 'neutral'
+  tone?: 'good' | 'critical'
 }) {
   const color =
     tone === 'good' ? 'var(--good-text)' : tone === 'critical' ? 'var(--critical)' : 'var(--text-primary)'

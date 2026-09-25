@@ -7,7 +7,3 @@ interface ImportMetaEnv {
   /** Legacy JWT key, retired by Supabase at the end of 2026. */
   readonly VITE_SUPABASE_ANON_KEY?: string
 }
-
-interface ImportMeta {
-  readonly env: ImportMetaEnv
-}

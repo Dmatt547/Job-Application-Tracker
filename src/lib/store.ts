@@ -51,7 +51,6 @@ export interface Store {
   updateJob: (id: string, patch: Partial<JobDraft>) => Promise<void>
   deleteJob: (id: string) => Promise<void>
   importJobs: (drafts: JobDraft[], mode: 'replace' | 'merge') => Promise<void>
-  refresh: () => Promise<void>
 }
 
 /**
@@ -227,6 +226,5 @@ export function useStore(userId: string | null): Store {
     updateJob,
     deleteJob,
     importJobs,
-    refresh,
   }
 }

@@ -1,15 +1,16 @@
 node_modules
 dist
-dist-ssr
-*.local
-.env
-.env.local
-.env.*.local
-.DS_Store
-.vscode/*
-!.vscode/extensions.json
-*.log
-npm-debug.log*
-scripts/seed.json
-test-results.xml
 coverage
+*.tsbuildinfo
+test-results.xml
+*.log
+.DS_Store
+.vscode
+
+# Secrets
+.env
+.env.*.local
+*.local
+
+# Personal data from the spreadsheet importer
+scripts/seed.json

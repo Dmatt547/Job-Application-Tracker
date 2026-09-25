@@ -110,12 +110,11 @@ I checked the suite has teeth by mutating the source: removing the
 closed-job filter and swapping that `Math.round` for `Math.floor` each fail
 exactly one test.
 
-CI runs typecheck, tests and a production build on every push and PR. There
-are two equivalent configs: `.github/workflows/ci.yml` is the one wired up,
-and `azure-pipelines.yml` expresses the same gate for Azure DevOps.
+CI (`.github/workflows/ci.yml`) runs typecheck, tests and a production build
+on every push and PR.
 
 ```bash
-npm test          # watchable locally
+npm test          # npm run test:watch to re-run on save
 npm run typecheck
 npm run build
 ```
@@ -187,29 +186,32 @@ magic link and scope the RLS policy to `auth.uid()` — there is a comment in
 ```
 src/
   types.ts              Status, Source, Priority unions; the Job shape
+  test-setup.ts         Pins the test timezone to Melbourne
   lib/
     supabase.ts         Client, null when env vars are absent
+    auth.ts             useAuth hook — session, magic link, Google sign-in
     store.ts            useStore hook — every read and write, both backends
     derive.ts           Action queue ranking and stats calculations
     format.ts           Date maths and display formatting
+    *.test.ts           Unit tests for derive and format
   components/
     Today.tsx           Action queue
     Board.tsx           Drag-and-drop kanban
     ListView.tsx        Sortable, filterable table
     Stats.tsx           Funnel, weekly bars, source conversion
     JobModal.tsx        Add and edit form
+    SignIn.tsx          Sign-in screen
+    GoogleButton.tsx    Google's official button (+ google-button.css)
     ui.tsx              Shared primitives and status presentation
 supabase/
   schema.sql            Tables, indexes, trigger, base RLS policy
   02_auth.sql           user_id column, backfill, per-account policies
 scripts/seed_from_xlsx.py   Spreadsheet importer
 .github/workflows/ci.yml    CI (typecheck, test, build)
-azure-pipelines.yml         The same gate for Azure DevOps
 ```
 
 ## Things I would do next
 
-- Supabase Auth, so the live link is safe to share.
 - Parse a job ad URL and pre-fill the form, rather than typing company and role.
 - Email digest of the action queue each morning.
 - Track which cover letter went with which application.

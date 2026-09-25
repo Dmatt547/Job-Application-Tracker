@@ -4,7 +4,6 @@ import { supabase, isCloud } from './supabase'
 
 export interface Auth {
   /** Null when signed out, or when running in local-only mode. */
-  session: Session | null
   userId: string | null
   email: string | null
   /** True until the initial session lookup finishes. */
@@ -98,7 +97,6 @@ export function useAuth(): Auth {
   }, [])
 
   return {
-    session,
     userId: session?.user.id ?? null,
     email: session?.user.email ?? null,
     loading,

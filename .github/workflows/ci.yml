@@ -1,9 +1,4 @@
-# GitHub Actions CI.
-#
-# This and azure-pipelines.yml run the same three checks. GitHub Actions is the
-# one wired to this repo, because it needs no billing link and gives the badge
-# in the README. The Azure pipeline is the same gate expressed for Azure
-# DevOps, which is what I would be using in a team that standardised on it.
+# Typecheck, test and build on every push to main and every PR into it.
 
 name: CI
 
@@ -16,11 +11,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    env:
-      # Tests assert on relative dates and runners are UTC. Pin the timezone
-      # the app is used in, or "today" lands on the wrong side of midnight.
-      TZ: Australia/Melbourne
 
     steps:
       - uses: actions/checkout@v4

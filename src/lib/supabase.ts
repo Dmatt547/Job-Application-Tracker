@@ -12,18 +12,11 @@ const key =
   import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim() ||
   import.meta.env.VITE_SUPABASE_ANON_KEY?.trim()
 
-/** Null when the env vars are absent, which puts the app in local-only mode. */
-export const supabase: SupabaseClient | null =
-  url && key
-    ? createClient(url, key, {
-        auth: {
-          // Keep the session across reloads, and pick it up from the URL
-          // fragment when a magic link lands back on the page.
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true,
-        },
-      })
-    : null
+/**
+ * Null when the env vars are absent, which puts the app in local-only mode.
+ * The client's defaults already persist the session across reloads and pick
+ * it up from the URL when a magic link lands back on the page.
+ */
+export const supabase: SupabaseClient | null = url && key ? createClient(url, key) : null
 
 export const isCloud = supabase !== null
