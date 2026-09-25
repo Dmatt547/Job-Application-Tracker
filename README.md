@@ -5,7 +5,7 @@ being useful at around 90 rows.
 
 [![CI](https://github.com/DanielMattioli/job-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/DanielMattioli/job-tracker/actions/workflows/ci.yml)
 
-Live: _add your Netlify URL here once deployed_
+Live: easyjobtrackerapp.netlify.app
 
 ## The problem
 
