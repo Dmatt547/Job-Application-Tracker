@@ -14,6 +14,16 @@ const key =
 
 /** Null when the env vars are absent, which puts the app in local-only mode. */
 export const supabase: SupabaseClient | null =
-  url && key ? createClient(url, key, { auth: { persistSession: false } }) : null
+  url && key
+    ? createClient(url, key, {
+        auth: {
+          // Keep the session across reloads, and pick it up from the URL
+          // fragment when a magic link lands back on the page.
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true,
+        },
+      })
+    : null
 
 export const isCloud = supabase !== null

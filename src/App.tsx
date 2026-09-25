@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Job, JobDraft } from '../src/types'
 import { useStore } from './lib/store'
+import { useAuth } from './lib/auth'
 import { buildActionQueue } from './lib/derive'
 import { Today } from './components/Today'
 import { Board } from './components/Board'
 import { ListView } from './components/ListView'
 import { Stats } from './components/Stats'
 import { JobModal } from './components/JobModal'
+import { SignIn } from './components/SignIn'
 import { Button } from './components/ui'
 
 type View = 'today' | 'board' | 'list' | 'stats'
@@ -42,7 +44,8 @@ function useTheme() {
 }
 
 export default function App() {
-  const store = useStore()
+  const auth = useAuth()
+  const store = useStore(auth.userId)
   const { theme, setTheme } = useTheme()
   const [view, setView] = useState<View>('today')
   const [editing, setEditing] = useState<Job | null>(null)
@@ -87,6 +90,18 @@ export default function App() {
       alert(`Could not import that file: ${(e as Error).message}`)
     }
   }
+
+  // Restoring the session on load. Rendering the app first would flash the
+  // sign-in screen at someone who is already signed in.
+  if (auth.loading) {
+    return (
+      <div className="grid min-h-full place-items-center">
+        <p className="text-sm text-[var(--text-muted)]">Loading…</p>
+      </div>
+    )
+  }
+
+  if (auth.required) return <SignIn auth={auth} />
 
   return (
     <div className="min-h-full">
@@ -148,6 +163,16 @@ export default function App() {
               <option value="light">Light</option>
               <option value="dark">Dark</option>
             </select>
+            {auth.email && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => void auth.signOut()}
+                title={`Signed in as ${auth.email}`}
+              >
+                Sign out
+              </Button>
+            )}
             <Button size="sm" variant="ghost" onClick={exportJson} title="Download a JSON backup">
               Export
             </Button>
