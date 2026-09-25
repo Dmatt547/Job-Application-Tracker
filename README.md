@@ -45,7 +45,7 @@ rate broken down by where the role came from.
 | Layer | Choice | Why |
 |---|---|---|
 | UI | React 18 + TypeScript | Strict mode on, no `any` in application code |
-| Build | Vite 5 | ~1s production build, 57 kB gzipped total |
+| Build | Vite 5 | ~1s production build; 57 kB gzipped local-only, 115 kB with Supabase |
 | Styling | Tailwind CSS v4 | Design tokens as CSS custom properties |
 | Data | Supabase (Postgres) | Real database, realtime subscriptions, free tier |
 | Charts | Hand-rolled SVG/CSS | No charting dependency for four simple forms |
@@ -54,6 +54,12 @@ rate broken down by where the role came from.
 **Zero runtime chart dependencies.** The funnel, bar series and conversion chart
 are plain elements. Adding Recharts would have roughly doubled the bundle for
 four charts I could draw myself.
+
+**The Supabase client is tree-shaken out of local-only builds.** `supabase.ts`
+reads `import.meta.env.X` as direct member accesses so Vite can replace them
+with literals, which lets Rollup prove the client is unreachable and drop it —
+57 kB gzipped instead of 115 kB. Assigning `import.meta.env` to a variable
+first quietly defeats this, which is an easy 230 kB to lose by accident.
 
 ### Two storage modes
 
