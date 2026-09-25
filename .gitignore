@@ -11,4 +11,5 @@ dist-ssr
 *.log
 npm-debug.log*
 scripts/seed.json
-*.tsbuildinfo
+test-results.xml
+coverage

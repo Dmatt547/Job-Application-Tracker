@@ -9,7 +9,10 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
-    "seed": "python scripts/seed_from_xlsx.py"
+    "seed": "python scripts/seed_from_xlsx.py",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ci": "vitest run --reporter=default --reporter=junit --outputFile=test-results.xml"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
@@ -18,11 +21,13 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",
+    "@types/node": "^26.6.2",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.2",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.6.2",
-    "vite": "^5.4.8"
+    "vite": "^5.4.8",
+    "vitest": "^2.1.9"
   }
 }

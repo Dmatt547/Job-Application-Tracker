@@ -1,0 +1,73 @@
+# Azure DevOps pipeline for the job tracker.
+#
+# Typecheck, test and build on every push to main and every PR into it. The
+# build is the gate: nothing merges that does not compile and pass.
+#
+# Requires a free Microsoft-hosted parallel job, which Azure grants
+# automatically to private projects once the organisation is linked to an
+# Azure subscription (Organisation settings -> Billing). Without that link the
+# pipeline queues forever with "no hosted parallelism has been purchased".
+
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  # Tests assert on relative dates. Agents run in UTC, so pin the timezone the
+  # app is actually used in or "today" lands on the wrong side of midnight.
+  TZ: Australia/Melbourne
+  npm_config_cache: $(Pipeline.Workspace)/.npm
+
+steps:
+  - task: NodeTool@0
+    displayName: Use Node 22
+    inputs:
+      versionSpec: '22.x'
+
+  - task: Cache@2
+    displayName: Restore npm cache
+    inputs:
+      key: 'npm | "$(Agent.OS)" | package-lock.json'
+      restoreKeys: |
+        npm | "$(Agent.OS)"
+      path: $(npm_config_cache)
+
+  # ci, not install: fails loudly if package-lock.json and package.json have
+  # drifted apart, rather than quietly resolving something different to local.
+  - script: npm ci
+    displayName: Install dependencies
+
+  - script: npm run typecheck
+    displayName: Typecheck
+
+  - script: npm run test:ci
+    displayName: Unit tests
+
+  - task: PublishTestResults@2
+    displayName: Publish test results
+    # Publish the report even when the tests failed — that is exactly when
+    # you want to see which ones.
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: test-results.xml
+      testRunTitle: 'Unit tests'
+      failTaskOnFailedTests: true
+
+  - script: npm run build
+    displayName: Production build
+
+  - task: PublishPipelineArtifact@1
+    displayName: Publish dist
+    inputs:
+      targetPath: dist
+      artifact: dist
