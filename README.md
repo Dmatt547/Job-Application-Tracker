@@ -88,8 +88,8 @@ That is enough. It opens on `localhost:5173` in localStorage mode.
 
 1. Create a free project at [supabase.com](https://supabase.com).
 2. Open the SQL editor and run `supabase/schema.sql`.
-3. Copy `.env.example` to `.env` and fill in the URL and anon key from
-   **Project Settings → API**.
+3. Copy `.env.example` to `.env` and fill in the project URL and the
+   **publishable key** (`sb_publishable_…`) from **Settings → API Keys**.
 4. Restart the dev server. The header switches from "This browser only" to
    "Synced".
 
@@ -113,19 +113,24 @@ locked in.
 2. In Netlify, **Add new site → Import an existing project**, pick the repo.
 3. Build settings come from `netlify.toml` — build `npm run build`, publish
    `dist`. Nothing to type.
-4. If using Supabase, add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` under
-   **Site configuration → Environment variables**, then redeploy.
+4. If using Supabase, add `VITE_SUPABASE_URL` and
+   `VITE_SUPABASE_PUBLISHABLE_KEY` under **Site configuration → Environment
+   variables**, then redeploy.
 
 Every push to `main` redeploys.
 
 ## A note on security
 
-This is a single-user app with no login, so the Supabase anon key is the only
-credential and row-level security is permissive. Anyone with the deployed URL and
-that key can read and write the table. That is a deliberate trade for a personal
-tool. Before putting the live link anywhere public, swap in Supabase Auth with a
-magic link and scope the RLS policy to `auth.uid()` — there is a comment in
-`schema.sql` marking exactly where.
+This is a single-user app with no login, so the Supabase publishable key is the
+only credential and row-level security is permissive. The publishable key is
+meant to be visible in browser code — that part is normal — but because the RLS
+policy grants the `anon` role full access, anyone who has both the deployed URL
+and that key can read and write the table. That is a deliberate trade for a
+personal tool, not a pattern to copy.
+
+Before putting the live link anywhere public, add Supabase Auth with an email
+magic link and scope the policy to `auth.uid()`. There is a comment in
+`schema.sql` marking exactly which policy to replace.
 
 ## Project structure
 
