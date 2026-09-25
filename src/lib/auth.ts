@@ -12,6 +12,7 @@ export interface Auth {
   /** True when a sign-in is required before data can load. */
   required: boolean
   sendMagicLink: (email: string) => Promise<{ error: string | null }>
+  signInWithGoogle: () => Promise<{ error: string | null }>
   signOut: () => Promise<void>
 }
 
@@ -66,6 +67,23 @@ export function useAuth(): Auth {
     return { error: error?.message ?? null }
   }, [])
 
+  const signInWithGoogle = useCallback(async () => {
+    const sb = supabase
+    if (!sb) return { error: 'Supabase is not configured.' }
+    const { error } = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin,
+        // Ask Google for a refresh token and skip the account chooser only
+        // when there is genuinely one account. Without this, returning users
+        // get an extra click every time.
+        queryParams: { access_type: 'offline', prompt: 'select_account' },
+      },
+    })
+    // On success the browser navigates away, so nothing after this runs.
+    return { error: error?.message ?? null }
+  }, [])
+
   const signOut = useCallback(async () => {
     const sb = supabase
     if (!sb) return
@@ -86,6 +104,7 @@ export function useAuth(): Auth {
     loading,
     required: isCloud && !loading && session === null,
     sendMagicLink,
+    signInWithGoogle,
     signOut,
   }
 }

@@ -4,7 +4,7 @@ import { Button, Field, fieldClass } from './ui'
 
 export function SignIn({ auth }: { auth: Auth }) {
   const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle')
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'redirecting'>('idle')
   const [error, setError] = useState<string | null>(null)
 
   const submit = async (e: React.FormEvent) => {
@@ -18,6 +18,21 @@ export function SignIn({ auth }: { auth: Auth }) {
       setStatus('idle')
     } else {
       setStatus('sent')
+    }
+  }
+
+  const google = async () => {
+    setStatus('redirecting')
+    setError(null)
+    const { error } = await auth.signInWithGoogle()
+    // A successful call navigates away, so reaching here means it failed.
+    if (error) {
+      setError(
+        /provider is not enabled/i.test(error)
+          ? 'Google sign-in is not switched on for this project yet. Enable it under Authentication → Sign In / Providers in Supabase.'
+          : error,
+      )
+      setStatus('idle')
     }
   }
 
@@ -71,41 +86,57 @@ export function SignIn({ auth }: { auth: Auth }) {
             </Button>
           </div>
         ) : (
-          <form onSubmit={submit} className="mt-6 space-y-3">
-            <Field label="Email address" hint="No password. We email you a one-time link.">
-              <input
-                type="email"
-                className={fieldClass}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                required
-                autoFocus
-                autoComplete="email"
-              />
-            </Field>
-
-            {error && (
-              <p role="alert" className="text-sm" style={{ color: 'var(--critical)' }}>
-                <span aria-hidden="true">⚠ </span>
-                {error}
-              </p>
-            )}
-
+          <>
             <Button
-              type="submit"
-              variant="primary"
-              className="w-full"
-              disabled={status === 'sending'}
+              variant="outline"
+              className="mt-6 w-full"
+              onClick={() => void google()}
+              disabled={status === 'redirecting'}
             >
-              {status === 'sending' ? 'Sending…' : 'Email me a sign-in link'}
+              {status === 'redirecting' ? 'Redirecting…' : 'Continue with Google'}
             </Button>
-          </form>
+
+            <div className="my-4 flex items-center gap-3" aria-hidden="true">
+              <span className="h-px flex-1 bg-[var(--border-strong)]" />
+              <span className="text-[11px] text-[var(--text-muted)]">or</span>
+              <span className="h-px flex-1 bg-[var(--border-strong)]" />
+            </div>
+
+            <form onSubmit={submit} className="space-y-3">
+              <Field label="Email address" hint="No password. We email you a one-time link.">
+                <input
+                  type="email"
+                  className={fieldClass}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  required
+                  autoComplete="email"
+                />
+              </Field>
+
+              <Button
+                type="submit"
+                variant="primary"
+                className="w-full"
+                disabled={status === 'sending'}
+              >
+                {status === 'sending' ? 'Sending…' : 'Email me a sign-in link'}
+              </Button>
+            </form>
+          </>
+        )}
+
+        {error && (
+          <p role="alert" className="mt-3 text-sm" style={{ color: 'var(--critical)' }}>
+            <span aria-hidden="true">⚠ </span>
+            {error}
+          </p>
         )}
 
         <p className="mt-5 border-t pt-4 text-[11px] leading-relaxed text-[var(--text-muted)]">
-          Each account sees only its own roles. Signing up with a new address gives you an empty
-          tracker, so feel free to try it out.
+          Both routes reach the same account when the email matches. Each account sees only its own
+          roles, so signing up with a new address gives you an empty tracker.
         </p>
       </div>
     </div>
