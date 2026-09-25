@@ -93,6 +93,21 @@ export function SignIn({ auth }: { auth: Auth }) {
               onClick={() => void google()}
               disabled={status === 'redirecting'}
             >
+              {/* Google's official mark, served from public/google.svg. Their
+                  branding guidelines require the supplied asset rather than a
+                  redrawn copy, so if the file is missing we drop the image and
+                  keep a text-only button instead of showing a broken icon. */}
+              <img
+                src="/google.svg"
+                alt=""
+                aria-hidden="true"
+                width={18}
+                height={18}
+                className="shrink-0"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
               {status === 'redirecting' ? 'Redirecting…' : 'Continue with Google'}
             </Button>
 
